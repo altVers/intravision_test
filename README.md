@@ -1,0 +1,1 @@
+Макет — https://www.figma.com/design/MAg0K2Wo9WwUyUUwQMKhlq/Untitled?node-id=0-1&p=f&t=kVNUoTTBdiyq562g-0
