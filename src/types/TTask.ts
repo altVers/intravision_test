@@ -29,3 +29,20 @@ export const TasksSchema = z.array(TaskSchema);
 
 export type TTask = z.infer<typeof TaskSchema>;
 export type TTasks = z.infer<typeof TasksSchema>;
+
+
+export type TNewTask = {
+  name: string, 
+  description: string,
+  comment: string,
+  price: number, 
+  taskTypeId: number, 
+  statusId: number, 
+  priorityId: number,
+  serviceId: number,
+  resolutionDatePlan: string,
+  tags: number[],
+  initiatorId: number,
+  executorId: number,
+  executorGroupId: number,
+}

@@ -1,0 +1,7 @@
+nav ul li:hover {
+    background: #012842;
+}
+
+nav ul li.active {
+    background: #013558;
+}
