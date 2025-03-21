@@ -4,7 +4,7 @@ import React from "react";
 import { Layout, Input } from "antd";
 import { Navigation } from "@/components/Navigation/Navigation";
 import Image from "next/image";
-import logo from "../../assets/img/logo.png"
+import logo from "../../assets/img/logo.png";
 import Link from "next/link";
 
 const { Header, Sider, Content } = Layout;
@@ -37,27 +37,25 @@ const layoutStyle: React.CSSProperties = {
 
 const logoStyle: React.CSSProperties = {
   width: 52,
-  height: 76,
-  padding: "16px 0"
+  height: "auto",
+  padding: "16px 0",
 };
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Layout style={layoutStyle}>
-      <Sider width={100} style={siderStyle}>
-        <Link href={'/'}><Image src={logo} alt="logo" style={logoStyle}/></Link>
-        <Navigation />
-      </Sider>
-      <Layout>
-        <Header style={headerStyle}>
-          <Search
-            placeholder="Найти..."
-            allowClear
-            style={{ width: 500 }}
-          />
-        </Header>
-        <Content style={contentStyle}>{children}</Content>
+      <Layout style={layoutStyle}>
+        <Sider width={100} style={siderStyle}>
+          <Link href={"/"}>
+            <Image priority src={logo} alt="logo" style={logoStyle} />
+          </Link>
+          <Navigation />
+        </Sider>
+        <Layout>
+          <Header style={headerStyle}>
+            <Search placeholder="Найти..." allowClear style={{ width: 500 }} />
+          </Header>
+          <Content style={contentStyle}>{children}</Content>
+        </Layout>
       </Layout>
-    </Layout>
   );
 }

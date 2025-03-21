@@ -1,6 +1,7 @@
 import React from "react";
-import "../assets/styles/styles.css";
 import { AppLayout } from "@/components/AppLayout/AppLayout";
+import { MyProvider } from "@/components/Provider/Provider";
+import "../assets/styles/styles.css";
 
 export default function RootLayout({
   children,
@@ -8,10 +9,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru">
-      <body>
-        <AppLayout>{children}</AppLayout>
-      </body>
-    </html>
+    <MyProvider>
+      <html lang="ru">
+        <body>
+          <AppLayout>{children}</AppLayout>
+        </body>
+      </html>
+    </MyProvider>
   );
 }

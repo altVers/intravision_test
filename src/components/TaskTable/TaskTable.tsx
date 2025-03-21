@@ -1,12 +1,14 @@
 "use client";
 
-import React, { FC, useState } from "react";
-import { Button, Drawer, Input, Table, Tag } from "antd";
+import React, { FC, useEffect } from "react";
+import { Table, Tag } from "antd";
 import type { TableProps } from "antd";
 import { TTasks } from "@/types/TTask";
-import { CloseOutlined } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store/store";
+import { fetchTasksAsync } from "@/store/tasksSlice";
 
-interface DataType {
+export interface TasksTableDataType {
   key: number;
   id: number;
   name: string;
@@ -15,10 +17,10 @@ interface DataType {
 }
 
 interface Props {
-  data: TTasks;
+  onRowClick: (record: number) => void;
 }
 
-const columns: TableProps<DataType>["columns"] = [
+const columns: TableProps<TasksTableDataType>["columns"] = [
   {
     title: "ID",
     dataIndex: "id",
@@ -61,16 +63,15 @@ const columns: TableProps<DataType>["columns"] = [
   },
 ];
 
-const data: DataType[] = [];
+export const TasksTable: FC<Props> = ({ onRowClick }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const {tasks, status} = useSelector((state: RootState) => state.tasks)
 
-export const TaskTable: FC<Props> = ({ data }) => {
-  const [visible, setVisible] = useState(false);
-  const [selectedRowData, setSelectedRowData] = useState<DataType | null>(null);
-  const onRowClick = (record: DataType) => {
-    setSelectedRowData(record);
-    setVisible(true);
-  };
-  const parsedData = data.map((item) => {
+  useEffect(() => {
+    dispatch(fetchTasksAsync())
+  }, [dispatch]);
+
+  const parsedData = tasks.map((item) => {
     return {
       key: item.id,
       id: item.id,
@@ -79,53 +80,19 @@ export const TaskTable: FC<Props> = ({ data }) => {
       executor: item.executorName,
     };
   });
+
   return (
     <>
-      <Table<DataType>
-      columns={columns}
-      dataSource={parsedData}
-      scroll={{ y: 700 }}
-      pagination={false}
-      onRow={(record) => ({
-        onClick: () => onRowClick(record),
-      })}
-    />
-    <Drawer  
-        title={`№${selectedRowData?.id} ${selectedRowData?.name}`} 
-        placement="right"  
-        onClose={() => setVisible(false)}  
-        open={visible}
-        size="large"
-        mask={false}
-        styles={{ header: { backgroundColor: "#1A4876", color: "#FFFFFF", padding: "20px 24px" } }}
-        closeIcon={  
-          <CloseOutlined style={{ color: 'white', fontSize: '20px' }} /> 
-        } 
-        destroyOnClose
-      >  
-        {selectedRowData && (  
-          <>  
-            <Input   
-              placeholder="Имя"   
-              value={selectedRowData.name}   
-              style={{ marginBottom: 16 }}   
-            />  
-            <Input   
-              placeholder="Возраст"   
-              value={selectedRowData.status}   
-              style={{ marginBottom: 16 }}   
-            />  
-            <Input   
-              placeholder="Адрес"   
-              value={selectedRowData.executor}   
-              style={{ marginBottom: 16 }}   
-            />  
-          </>  
-        )}  
-        <Button type="primary">  
-          Сохранить  
-        </Button>  
-      </Drawer>
+      <Table<TasksTableDataType>
+        columns={columns}
+        dataSource={parsedData}
+        scroll={{ y: 700 }}
+        pagination={false}
+        onRow={(record) => ({
+          onClick: () => onRowClick(record.id),
+        })}
+        loading={status === 'loading'}
+      />
     </>
   );
 };

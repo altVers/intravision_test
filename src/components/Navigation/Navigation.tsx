@@ -22,7 +22,7 @@ const navItemStyle: React.CSSProperties = {
 
 export const Navigation: FC = () => {
   const pathname = usePathname();
-  console.log(pathname);
+
   return (
     <nav>
       <ul>
