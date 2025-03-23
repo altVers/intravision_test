@@ -1,3 +1,6 @@
+import { FC } from "react";
+import { usePathname } from "next/navigation";
+
 import {
   AuditOutlined,
   BarChartOutlined,
@@ -6,10 +9,8 @@ import {
   SettingOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
+
 import Link from "next/link";
-import { FC } from "react";
-import "./Navigation.css";
-import { usePathname } from "next/navigation";
 
 const navItemStyle: React.CSSProperties = {
   display: "flex",
@@ -20,48 +21,56 @@ const navItemStyle: React.CSSProperties = {
   color: "#FFF",
 };
 
+const navItems = [
+  {
+    href: "/help",
+    label: "База знаний",
+    icon: <BookOutlined style={{ fontSize: 36 }} />,
+  },
+  {
+    href: "/",
+    label: "Заявки",
+    icon: <FileOutlined style={{ fontSize: 36 }} />,
+  },
+  {
+    href: "/employees",
+    label: "Сотрудники",
+    icon: <TeamOutlined style={{ fontSize: 36 }} />,
+  },
+  {
+    href: "/clients",
+    label: "Клиенты",
+    icon: <AuditOutlined style={{ fontSize: 36 }} />,
+  },
+  {
+    href: "/actives",
+    label: "Активы",
+    icon: <BarChartOutlined style={{ fontSize: 36 }} />,
+  },
+  {
+    href: "/settings",
+    label: "Настройки",
+    icon: <SettingOutlined style={{ fontSize: 36 }} />,
+  },
+];
+
 export const Navigation: FC = () => {
   const pathname = usePathname();
 
   return (
     <nav>
       <ul>
-        <li className={pathname === '/help' ? 'active' : ''}>
-          <Link href="/help" style={navItemStyle}>
-            <BookOutlined style={{ fontSize: 36 }} />
-            <span>База знаний</span>
-          </Link>
-        </li>
-        <li className={pathname === '/' ? 'active' : ''}>
-          <Link href="/" style={navItemStyle}>
-            <FileOutlined style={{ fontSize: 36 }} />
-            <span>Заявки</span>
-          </Link>
-        </li>
-        <li className={pathname === '/employees' ? 'active' : ''}>
-          <Link href="/employees" style={navItemStyle}>
-            <TeamOutlined style={{ fontSize: 36 }} />
-            <span>Сотрудники</span>
-          </Link>
-        </li>
-        <li className={pathname === '/clients' ? 'active' : ''}>
-          <Link href="/clients" style={navItemStyle}>
-            <AuditOutlined style={{ fontSize: 36 }} />
-            <span>Клиенты</span>
-          </Link>
-        </li>
-        <li className={pathname === '/actives' ? 'active' : ''}>
-          <Link href="/actives" style={navItemStyle}>
-            <BarChartOutlined style={{ fontSize: 36 }} />
-            <span>Активы</span>
-          </Link>
-        </li>
-        <li className={pathname === '/settings' ? 'active' : ''}>
-          <Link href="/settings" style={navItemStyle}>
-            <SettingOutlined style={{ fontSize: 36 }} />
-            <span>Настройки</span>
-          </Link>
-        </li>
+        {navItems.map((item) => (
+          <li
+            key={item.href}
+            className={pathname === item.href ? "active" : ""}
+          >
+            <Link href={item.href} style={navItemStyle}>
+              {item.icon}
+              <span>{item.label}</span>
+            </Link>
+          </li>
+        ))}
       </ul>
     </nav>
   );

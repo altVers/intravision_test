@@ -1,11 +1,15 @@
 "use client";
 
 import React, { FC, useEffect } from "react";
+
 import { Table, Tag } from "antd";
 import type { TableProps } from "antd";
+
+import { fetchTask } from "@/api/fetchTask";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
-import { fetchTasksAsync } from "@/store/tasksSlice";
+import { fetchTasksAsync, setEditedTask } from "@/store/tasksSlice";
+import { toggleEditTaskDrawer } from "@/store/drawersSlice";
 
 export interface TasksTableDataType {
   key: number;
@@ -24,15 +28,18 @@ const statusBarStyles: React.CSSProperties = {
   borderRadius: 8,
 };
 
-interface Props {
-  onRowClick: (record: number) => void;
-}
-
-export const TasksTable: FC<Props> = ({ onRowClick }) => {
-  const dispatch = useDispatch<AppDispatch>();
+export const TasksTable: FC = () => {
   const { tasks, taskStatus } = useSelector((state: RootState) => state.tasks);
   const { priorities } = useSelector((state: RootState) => state.priorities);
   const { statuses } = useSelector((state: RootState) => state.statuses);
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    async function fetchData() {
+      await dispatch(fetchTasksAsync());
+    }
+    fetchData();
+  }, [dispatch]);
 
   const columns: TableProps<TasksTableDataType>["columns"] = [
     {
@@ -40,7 +47,7 @@ export const TasksTable: FC<Props> = ({ onRowClick }) => {
       dataIndex: "id",
       key: "id",
       render: (text, record) => (
-        <div style={{ display: "flex", alignItems: "center", height: '100%' }}>
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
           <div
             style={{
               ...statusBarStyles,
@@ -63,7 +70,8 @@ export const TasksTable: FC<Props> = ({ onRowClick }) => {
       dataIndex: "status",
       key: "status",
       render: (tag, record) => {
-        let color = statuses.find((s) => s.id === record.statusId)?.rgb || "gray";
+        let color =
+          statuses.find((s) => s.id === record.statusId)?.rgb || "gray";
         return <Tag color={color}>{tag}</Tag>;
       },
     },
@@ -74,16 +82,15 @@ export const TasksTable: FC<Props> = ({ onRowClick }) => {
     },
   ];
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        dispatch(fetchTasksAsync());
-      } catch (error) {
-        console.error("Ошибка при загрузке данных таблицы: ", error);
-      }
+  const onRowClick = async (id: number) => {
+    try {
+      const task = await fetchTask(id);
+      dispatch(setEditedTask(task));
+      dispatch(toggleEditTaskDrawer(true));
+    } catch (error) {
+      console.error("Ошибка при получении задачи:", error);
     }
-    fetchData();
-  }, [dispatch]);
+  };
 
   const parsedData = tasks.map((item) => {
     return {

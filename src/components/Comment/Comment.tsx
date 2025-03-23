@@ -1,8 +1,11 @@
+import React, { FC } from "react"
+
 import { TTask } from "@/types/TTask"
+
 import { UserOutlined } from "@ant-design/icons"
 import { Avatar } from "antd"
+
 import dayjs from "dayjs";
-import React, { FC } from "react"
 import 'dayjs/locale/ru'; 
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 
@@ -41,8 +44,6 @@ const dateTextStyles: React.CSSProperties = {
 
 export const Comment:FC<Props> = ({data}) => {
     const commentDate = dayjs(data.createdAt).locale('ru').format('DD MMMM, HH:MM');
-    // const {users} = useSelector((state: RootState) => state.users)
-    // const userName = users.find((user) => user.id === data.id)?.name
  
     if(data.comment) {
         return (

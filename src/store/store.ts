@@ -4,6 +4,7 @@ import statusesSlice from "./statusesSlice";
 import usersSlice from "./usersSlice";
 import tagsSlice from "./tagsSlice";
 import prioritiesSlice from "./prioritiesSlice";
+import drawersSlice from "./drawersSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     users: usersSlice,
     tags: tagsSlice,
     priorities: prioritiesSlice,
+    drawers: drawersSlice,
   },
 });
 

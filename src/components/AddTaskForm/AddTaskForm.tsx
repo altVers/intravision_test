@@ -1,24 +1,27 @@
-import React from "react";
-import type { FormProps } from "antd";
-import { Button, Form, Input } from "antd";
-import TextArea from "antd/es/input/TextArea";
-import { TNewTask } from "@/types/TTask";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { FC } from "react";
 
-interface Props {
-  addNewTask: (task: TNewTask) => void;
-}
+import type { FormProps } from "antd";
+import { Button, Form, Input, message } from "antd";
+import TextArea from "antd/es/input/TextArea";
+
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store/store";
+import { toggleEditTaskDrawer } from "@/store/drawersSlice";
+import { addTaskAsync, setEditedTask } from "@/store/tasksSlice";
 
 type FieldType = {
   name: string;
   description: string;
 };
 
-export const AddTaskForm: React.FC<Props> = ({ addNewTask }) => {
+export const AddTaskForm: FC = () => {
+  const [messageApi, contextHolder] = message.useMessage();
   const { taskStatus } = useSelector((state: RootState) => state.tasks);
+  const dispatch = useDispatch<AppDispatch>();
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    // Собираем объект для отправки по схеме из сваггера
+    // statusId, priorityId выбрал случайные из доступных
     const task = {
       name: values.name,
       description: values.description,
@@ -35,9 +38,32 @@ export const AddTaskForm: React.FC<Props> = ({ addNewTask }) => {
       executorGroupId: 0,
     };
 
-    addNewTask(task);
+    // Отправляем запрос на добавление задачи, если запрос удачный:
+    // 1. Показываем соотвествующее сообщение
+    // 2. Определяем задачу, как редактируемую, отправляем в стор
+    // 3. Открываем дровер редактирования
+    // Если неудачно:
+    // 1. Показываем сообщение
+    // 2. В консоли появится сообщение об ошибке (логика в кейсе в сторе)
+    await dispatch(addTaskAsync(task)).then((resultAction) => {
+      if (addTaskAsync.fulfilled.match(resultAction)) {
+        messageApi.open({
+          type: "success",
+          content: "Задача успешно добвлена!",
+        });
+        dispatch(setEditedTask(resultAction.payload));
+        dispatch(toggleEditTaskDrawer(true));
+      } else {
+        messageApi.open({
+          type: "error",
+          content: `Не удалось добавить задачу.`,
+        });
+      }
+    });
   };
 
+  // Тут еще одна ошибка будет выскакивать, если отправть форму не вышло
+  // Возможно, уже измбыточно, но оставил
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
     errorInfo
   ) => {
@@ -46,6 +72,7 @@ export const AddTaskForm: React.FC<Props> = ({ addNewTask }) => {
 
   return (
     <>
+      {contextHolder}
       <Form
         name="addTaskForm"
         labelCol={{ span: 100 }}

@@ -1,22 +1,23 @@
-import { AppDispatch, RootState } from "@/store/store";
-import { editTaskAsync, setEditedTask } from "@/store/tasksSlice";
 import {
   Button,
   Col,
   DatePicker,
   Form,
   FormProps,
-  message,
   Row,
   Select,
   SelectProps,
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import TextArea from "antd/es/input/TextArea";
+import { Comment } from "../Comment/Comment";
+
 import dayjs from "dayjs";
+
 import React, { FC, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Comment } from "../Comment/Comment";
+import { AppDispatch, RootState } from "@/store/store";
+import { editTaskAsync, setEditedTask } from "@/store/tasksSlice";
 
 type FieldType = {
   comment: string;
@@ -54,7 +55,9 @@ export const EditTaskForm: FC = () => {
   const { statuses } = useSelector((state: RootState) => state.statuses);
   const { users } = useSelector((state: RootState) => state.users);
   const { tags } = useSelector((state: RootState) => state.tags);
+  const dispatch = useDispatch<AppDispatch>();
 
+  // Стейты для выбранного статуса и его цвета
   const defaultStatus = editedTask.statusId;
   const [selectedStatus, setSelectedStatus] = useState<number | undefined>(
     defaultStatus
@@ -63,11 +66,35 @@ export const EditTaskForm: FC = () => {
     statuses.find((status) => status.id === defaultStatus)?.rgb
   );
 
-  const dispatch = useDispatch<AppDispatch>();
-
   const [form] = useForm();
-  const [messageApi, contextHolder] = message.useMessage();
 
+  useEffect(() => {
+    // При изменении статуса меняем также цвет кружка
+    const currentStatus = statuses.find(
+      (status) => status.id === selectedStatus
+    );
+    if (currentStatus) {
+      setStatusColor(currentStatus.rgb);
+    }
+  }, [selectedStatus, statuses, defaultStatus]);
+
+  // Мапим данные под селект
+  const statusesOptions: SelectProps["options"] = statuses.map((status) => ({
+    label: status.name,
+    value: status.id,
+  }));
+
+  const executorsOptions: SelectProps["options"] = users.map((user) => ({
+    label: user.name,
+    value: user.id,
+  }));
+
+  const tagsOptions: SelectProps["options"] = tags.map((tag) => ({
+    label: tag.name,
+    value: tag.id,
+  }));
+
+  // Темплейт для запроса на едит с обязательными полями
   const editedValuesTemplate = {
     id: editedTask.id,
     statusId: editedTask.statusId,
@@ -75,30 +102,21 @@ export const EditTaskForm: FC = () => {
   };
 
   const onAddComment: FormProps<FieldType>["onFinish"] = async (values) => {
+    // Собираем объект на отправку
     const editedValues = {
       ...editedValuesTemplate,
       ...values,
     };
-    await dispatch(editTaskAsync(editedValues))
-      .then((resultAction) => {
-        if (editTaskAsync.fulfilled.match(resultAction)) {
-          dispatch(setEditedTask(resultAction.payload));
-        }
-      })
-      .then(
-        messageApi.open({
-          type: "success",
-          content: "Комментарий добавлен!",
-        })
-      )
-      .catch((error) => {
-        console.error("Не удалось внести изменения.", error.message);
-        messageApi.open({
-          type: "error",
-          content: `Не удалось внести изменения.`,
-        });
-      });
-    form.resetFields();
+    // 1. Отправляем запрос и димпатчим данные в стор.
+    // 2. Если успешно, открываем сообщение об успехе и заменяем объект
+    // изменяемой задачи в сторе, иначе - сообщение об ошибке.
+    // 3. Очищаем форму, если комментарий успешно отправился.
+    await dispatch(editTaskAsync(editedValues)).then((resultAction) => {
+      if (editTaskAsync.fulfilled.match(resultAction)) {
+        dispatch(setEditedTask(resultAction.payload));
+        form.resetFields();
+      }
+    });
   };
 
   const onStatusChange = async (value: number) => {
@@ -126,33 +144,8 @@ export const EditTaskForm: FC = () => {
     await dispatch(editTaskAsync(editedValues));
   };
 
-  const statusesOptions: SelectProps["options"] = statuses.map((status) => ({
-    label: status.name,
-    value: status.id,
-  }));
-
-  const executorsOptions: SelectProps["options"] = users.map((user) => ({
-    label: user.name,
-    value: user.id,
-  }));
-
-  const tagsOptions: SelectProps["options"] = tags.map((tag) => ({
-    label: tag.name,
-    value: tag.id,
-  }));
-
-  useEffect(() => {
-    const currentStatus = statuses.find(
-      (status) => status.id === selectedStatus
-    );
-    if (currentStatus) {
-      setStatusColor(currentStatus.rgb);
-    }
-  }, [selectedStatus, statuses, defaultStatus]);
-
   return (
     <>
-      {contextHolder}
       <Row style={{ height: "100%" }}>
         <Col span={16} style={{ paddingRight: 16 }}>
           <Form
