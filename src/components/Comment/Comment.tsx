@@ -56,7 +56,7 @@ export const Comment:FC<Props> = ({data}) => {
                     </div>
                 </header>
                 
-                <p style={commentStyles}>{data.comment}</p>
+                <div style={commentStyles} dangerouslySetInnerHTML={{__html: data.comment}} />
             </div>
          )
     }

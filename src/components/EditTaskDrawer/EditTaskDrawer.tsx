@@ -12,14 +12,28 @@ const drawerStyles = {
   header: {
     backgroundColor: "#1A4876",
     color: "#FFFFFF",
-    padding: "20px 24px",
+    padding: "24px 24px",
   },
   body: {
     backgroundColor: "#ECF3F7",
+    padding: 36,
   },
 };
-
-const closeIconStyles = { color: "white", fontSize: "20px" };
+const drawerTitleStyles: React.CSSProperties = {
+  display: "flex",
+  gap: 20,
+  alignItems: "center",
+};
+const closeIconStyles: React.CSSProperties = {
+  color: "white",
+  fontSize: "20px",
+};
+const closeBtnStyles: React.CSSProperties = {
+  border: "none",
+  background: "transparent",
+  cursor: "pointer",
+  marginLeft: "auto",
+};
 
 export const EditTaskDrawer: FC = () => {
   const { editedTask } = useSelector((state: RootState) => state.tasks);
@@ -31,18 +45,24 @@ export const EditTaskDrawer: FC = () => {
   return (
     <Drawer
       title={
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <div style={drawerTitleStyles}>
           <span>№{editedTask?.id}</span>
           <span>{editedTask?.name}</span>
+          <button
+            onClick={() => dispatch(toggleEditTaskDrawer(false))}
+            style={closeBtnStyles}
+          >
+            <CloseOutlined style={closeIconStyles} />
+          </button>
         </div>
       }
       placement="right"
       onClose={() => dispatch(toggleEditTaskDrawer(false))}
       open={isDrawerOpen}
-      size="large"
+      width={976}
       mask={false}
       styles={drawerStyles}
-      closeIcon={<CloseOutlined style={closeIconStyles} />}
+      closeIcon={false}
       destroyOnClose
     >
       {editedTask && <EditTaskForm key={editedTask.id} />}

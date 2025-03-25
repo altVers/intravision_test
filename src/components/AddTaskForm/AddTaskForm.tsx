@@ -14,6 +14,13 @@ type FieldType = {
   description: string;
 };
 
+const addTaskBtnStyles:React.CSSProperties = {
+  width: 150,
+  height: 35,
+  backgroundColor: "#008CF0",
+  borderRadius: 30,
+}
+
 export const AddTaskForm: FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const { taskStatus } = useSelector((state: RootState) => state.tasks);
@@ -29,7 +36,7 @@ export const AddTaskForm: FC = () => {
       price: 0,
       taskTypeId: 0,
       statusId: 54195,
-      priorityId: 51828,
+      priorityId: 59432,
       serviceId: 0,
       resolutionDatePlan: new Date().toISOString(),
       tags: [],
@@ -86,17 +93,15 @@ export const AddTaskForm: FC = () => {
         <Form.Item<FieldType>
           label="Название"
           name="name"
-          rules={[{ required: true, message: "Введите название задачи" }]}
         >
-          <Input />
+          <TextArea autoSize={{minRows: 3}}/>
         </Form.Item>
 
         <Form.Item<FieldType>
           label="Описание"
           name="description"
-          rules={[{ required: true, message: "Введите описание задачи" }]}
         >
-          <TextArea />
+          <TextArea autoSize={{minRows: 6}}/>
         </Form.Item>
 
         <Form.Item label={null}>
@@ -104,8 +109,9 @@ export const AddTaskForm: FC = () => {
             type="primary"
             htmlType="submit"
             loading={taskStatus === "loading"}
+            style={addTaskBtnStyles}
           >
-            Добавить
+            Сохранить
           </Button>
         </Form.Item>
       </Form>

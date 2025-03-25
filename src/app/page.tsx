@@ -15,6 +15,14 @@ import { fetchTagsAsync } from "@/store/tagsSlice";
 import { fetchUsersAsync } from "@/store/usersSlice";
 import { toggleAddTaskDrawer } from "@/store/drawersSlice";
 
+const addBtnStyles: React.CSSProperties = {
+  width: 180,
+  height: 40,
+  backgroundColor: "#008CF0",
+  borderRadius: 30,
+  marginLeft: 250,
+}
+
 export default function Page() {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -37,11 +45,11 @@ export default function Page() {
 
   return (
     <>
-      <Flex gap={15} vertical align="start" style={{ height: "100%" }}>
+      <Flex gap={24} vertical align="start" style={{ height: "100%" }}>
         <Button
           type="primary"
           size="large"
-          style={{ flexShrink: 0 }}
+          style={addBtnStyles}
           onClick={() => dispatch(toggleAddTaskDrawer(true))}
         >
           Создать заявку

@@ -1,16 +1,15 @@
 import { FC } from "react";
 import { usePathname } from "next/navigation";
 
-import {
-  AuditOutlined,
-  BarChartOutlined,
-  BookOutlined,
-  FileOutlined,
-  SettingOutlined,
-  TeamOutlined,
-} from "@ant-design/icons";
-
 import Link from "next/link";
+import Image from "next/image";
+
+import bookSvg from "../../assets/img/bookSvg.svg"
+import fileSvg from "../../assets/img/fileSvg.svg"
+import peopleSvg from "../../assets/img/peopleSvg.svg"
+import townSvg from "../../assets/img/townSvg.svg"
+import monitorSvg from "../../assets/img/monitorSvg.svg"
+import settingsSvg from "../../assets/img/settingSvg.svg"
 
 const navItemStyle: React.CSSProperties = {
   display: "flex",
@@ -25,32 +24,32 @@ const navItems = [
   {
     href: "/help",
     label: "База знаний",
-    icon: <BookOutlined style={{ fontSize: 36 }} />,
+    icon: <Image src={bookSvg} alt="иконка книги" width={30} height={30}/>,
   },
   {
     href: "/",
     label: "Заявки",
-    icon: <FileOutlined style={{ fontSize: 36 }} />,
+    icon: <Image src={fileSvg} alt="иконка книги" width={30} height={30}/>,
   },
   {
     href: "/employees",
     label: "Сотрудники",
-    icon: <TeamOutlined style={{ fontSize: 36 }} />,
+    icon: <Image src={peopleSvg} alt="иконка книги" width={30} height={30}/>,
   },
   {
     href: "/clients",
     label: "Клиенты",
-    icon: <AuditOutlined style={{ fontSize: 36 }} />,
+    icon: <Image src={townSvg} alt="иконка книги" width={30} height={30}/>,
   },
   {
     href: "/actives",
     label: "Активы",
-    icon: <BarChartOutlined style={{ fontSize: 36 }} />,
+    icon: <Image src={monitorSvg} alt="иконка книги" width={30} height={30}/>,
   },
   {
     href: "/settings",
     label: "Настройки",
-    icon: <SettingOutlined style={{ fontSize: 36 }} />,
+    icon: <Image src={settingsSvg} alt="иконка книги" width={30} height={30}/>,
   },
 ];
 

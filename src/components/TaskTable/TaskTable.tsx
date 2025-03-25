@@ -21,11 +21,46 @@ export interface TasksTableDataType {
   statusId: number;
 }
 
-const statusBarStyles: React.CSSProperties = {
-  width: 4,
-  height: 24,
-  marginRight: 15,
+const priorityBarStyles: React.CSSProperties = {
+  width: 6,
+  height: "100%",
+  marginRight: 10,
   borderRadius: 8,
+  marginLeft: -16,
+};
+
+const statusBarStyles: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  maxWidth: "100%",
+  padding: "6px 15px",
+  borderRadius: 12,
+};
+
+const statusTextStyles: React.CSSProperties = {
+  maxWidth: "100%",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  color: "#FFFFFF",
+  lineHeight: "14px",
+};
+
+const taskTitleStyles: React.CSSProperties = {
+  display: "-webkit-box",
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: "vertical",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  maxHeight: "3em",
+  lineHeight: "1.5em",
+};
+
+const textContainer: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  height: 54,
 };
 
 export const TasksTable: FC = () => {
@@ -46,11 +81,12 @@ export const TasksTable: FC = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      width: 115,
       render: (text, record) => (
-        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+        <div style={{ display: "flex", alignItems: "center", height: 54 }}>
           <div
             style={{
-              ...statusBarStyles,
+              ...priorityBarStyles,
               backgroundColor:
                 priorities.find((p) => p.id === record.priorityId)?.rgb ||
                 "transparent",
@@ -64,15 +100,26 @@ export const TasksTable: FC = () => {
       title: "Название",
       dataIndex: "name",
       key: "name",
+      width: 400,
+      render: (record) => (
+        <div style={textContainer}>
+          <div style={taskTitleStyles}>{record}</div>
+        </div>
+      ),
     },
     {
       title: "Статус",
       dataIndex: "status",
       key: "status",
+      width: 140,
       render: (tag, record) => {
         let color =
           statuses.find((s) => s.id === record.statusId)?.rgb || "gray";
-        return <Tag color={color}>{tag}</Tag>;
+        return (
+          <span style={{ ...statusBarStyles, backgroundColor: color }}>
+            <span style={statusTextStyles}>{tag}</span>
+          </span>
+        );
       },
     },
     {
@@ -109,7 +156,7 @@ export const TasksTable: FC = () => {
       <Table<TasksTableDataType>
         columns={columns}
         dataSource={parsedData}
-        scroll={{ y: 700 }}
+        scroll={{ y: 1000 }}
         pagination={false}
         onRow={(record) => ({
           onClick: () => onRowClick(record.id),

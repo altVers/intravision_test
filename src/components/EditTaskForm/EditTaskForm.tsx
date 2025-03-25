@@ -48,11 +48,19 @@ const labelStyles: React.CSSProperties = {
   color: "#9F9FA7",
 };
 
+const editTaskBtnStyles:React.CSSProperties = {
+  width: 150,
+  height: 35,
+  backgroundColor: "#008CF0",
+  borderRadius: 30,
+}
+
 export const EditTaskForm: FC = () => {
   const { editedTask, taskStatus } = useSelector(
     (state: RootState) => state.tasks
   );
   const { statuses } = useSelector((state: RootState) => state.statuses);
+  const { priorities } = useSelector((state: RootState) => state.priorities);
   const { users } = useSelector((state: RootState) => state.users);
   const { tags } = useSelector((state: RootState) => state.tags);
   const dispatch = useDispatch<AppDispatch>();
@@ -90,6 +98,11 @@ export const EditTaskForm: FC = () => {
   }));
 
   const tagsOptions: SelectProps["options"] = tags.map((tag) => ({
+    label: tag.name,
+    value: tag.id,
+  }));
+
+  const prioritysOptions: SelectProps["options"] = priorities.map((tag) => ({
     label: tag.name,
     value: tag.id,
   }));
@@ -144,6 +157,14 @@ export const EditTaskForm: FC = () => {
     await dispatch(editTaskAsync(editedValues));
   };
 
+  const onPriorityChange = async (value: number) => {
+    const editedValues = {
+      ...editedValuesTemplate,
+      priorityId: value,
+    };
+    await dispatch(editTaskAsync(editedValues));
+  };
+
   return (
     <>
       <Row style={{ height: "100%" }}>
@@ -153,23 +174,24 @@ export const EditTaskForm: FC = () => {
             layout="vertical"
             onFinish={onAddComment}
             form={form}
+            style={{marginBottom: 50}}
           >
-            <div style={{ ...contentBlockStyles, marginBottom: 30 }}>
+            <div style={{ ...contentBlockStyles, marginBottom: 65 }}>
               <span style={labelStyles}>Описание</span>
-              <span>{editedTask.description}</span>
+              <div dangerouslySetInnerHTML={{__html: editedTask.description}} />
             </div>
             <Form.Item<FieldType>
               name="comment"
               label={<span style={labelStyles}>Добавление комментариев</span>}
               layout="vertical"
             >
-              <TextArea />
+              <TextArea autoSize={{minRows: 4}}/>
             </Form.Item>
             <Form.Item label={null}>
               <Button
                 type="primary"
                 htmlType="submit"
-                loading={taskStatus === "loading"}
+                style={editTaskBtnStyles}
               >
                 Сохранить
               </Button>
@@ -209,6 +231,14 @@ export const EditTaskForm: FC = () => {
               options={executorsOptions}
               defaultValue={editedTask.executorId}
               onChange={onExecutorChange}
+            />
+          </div>
+          <div style={contentBlockStyles}>
+            <span style={labelStyles}>Приоритет</span>
+            <Select
+              options={prioritysOptions}
+              defaultValue={editedTask.priorityId}
+              onChange={onPriorityChange}
             />
           </div>
           <div style={contentBlockStyles}>
